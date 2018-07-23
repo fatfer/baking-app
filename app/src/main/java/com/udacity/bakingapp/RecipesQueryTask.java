@@ -2,52 +2,59 @@ package com.udacity.bakingapp;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.udacity.bakingapp.Model.Recipe;
 import com.udacity.bakingapp.Utils.Json;
-import com.udacity.bakingapp.Utils.Network;
+import com.udacity.bakingapp.Utils.RecipeService;
+import com.udacity.bakingapp.Utils.RecipeServiceClient;
 
 import org.json.JSONException;
 
-import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
-public class RecipesQueryTask extends AsyncTask<URL, Void, String>{
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-    private final Context context;
+public class RecipesQueryTask extends AsyncTask<Void, Void, Void>{
+
     private final AsyncTaskCompleteListener<List<Recipe>> listener;
+    private RecipeService mRecipeService;
 
-    RecipesQueryTask(Context context, AsyncTaskCompleteListener<List<Recipe>> listener){
-        this.context = context;
+    RecipesQueryTask(AsyncTaskCompleteListener<List<Recipe>> listener){
         this.listener = listener;
+        mRecipeService = new RecipeServiceClient().mRecipeService;
     }
 
     @Override
-    protected String doInBackground(URL... params) {
-        URL apiUrl = params[0];
-        String searchResults = null;
-        try {
-            searchResults = Network.getResponseFromHttpUrl(apiUrl);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return searchResults;
+    protected Void doInBackground(Void... voids) {
+        getRecipes();
+        return null;
     }
 
-    @Override
-    protected void onPostExecute(String searchResults) {
-        if (searchResults != null && !searchResults.equals("")) {
-            try {
-                List<Recipe> mRecipes = Json.parseRecipeJson(searchResults);
-                listener.onTaskComplete(mRecipes);
-            } catch (JSONException e) {
-                e.printStackTrace();
+
+    private void getRecipes() {
+        Call<ArrayList<Recipe>> call = mRecipeService.getRecipes();
+
+        call.enqueue(new Callback<ArrayList<Recipe>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Recipe>> call, Response<ArrayList<Recipe>> response) {
+
+                ArrayList<Recipe> recipes = response.body();
+                listener.onTaskComplete(recipes);
+
             }
-        }else{
-            Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
-        }
+
+            @Override
+            public void onFailure(Call<ArrayList<Recipe>> call, Throwable t) {
+                Log.d("ERROR", t.toString());
+            }
+        });
     }
+
 
 }

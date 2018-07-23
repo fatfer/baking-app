@@ -15,7 +15,7 @@ public class Network {
 
     private final static String RECIPES_BASE = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
-    public static URL buildMovieReviewsUrl() {
+    public static URL buildRecipesServiceUrl() {
         Uri builtUri = Uri.parse(RECIPES_BASE).buildUpon()
                 .build();
 
