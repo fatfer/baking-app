@@ -73,18 +73,10 @@ public class Recipe implements Parcelable {
         image = in.readString();
         servings = in.readInt();
         name = in.readString();
-        if (in.readByte() == 0x01) {
-            ingredients = new ArrayList<>();
-            in.readList(ingredients, Ingredient.class.getClassLoader());
-        } else {
-            ingredients = null;
-        }
-        if (in.readByte() == 0x01) {
-            steps = new ArrayList<>();
-            in.readList(steps, Step.class.getClassLoader());
-        } else {
-            steps = null;
-        }
+        this.ingredients = new ArrayList<>();
+        in.readList(this.ingredients, Ingredient.class.getClassLoader());
+        this.steps = new ArrayList<>();
+        in.readList(this.steps, Step.class.getClassLoader());
     }
 
     @Override
@@ -98,18 +90,8 @@ public class Recipe implements Parcelable {
         dest.writeString(image);
         dest.writeInt(servings);
         dest.writeString(name);
-        if (ingredients == null) {
-            dest.writeByte((byte) (0x00));
-        } else {
-            dest.writeByte((byte) (0x01));
-            dest.writeList(ingredients);
-        }
-        if (steps == null) {
-            dest.writeByte((byte) (0x00));
-        } else {
-            dest.writeByte((byte) (0x01));
-            dest.writeList(steps);
-        }
+        dest.writeList(ingredients);
+        dest.writeList(steps);
     }
 
     @SuppressWarnings("unused")

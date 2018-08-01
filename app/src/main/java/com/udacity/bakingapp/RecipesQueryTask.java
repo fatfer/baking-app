@@ -22,10 +22,10 @@ import retrofit2.Response;
 
 public class RecipesQueryTask extends AsyncTask<Void, Void, Void>{
 
-    private final AsyncTaskCompleteListener<List<Recipe>> listener;
+    private final AsyncTaskCompleteListener<ArrayList<Recipe>> listener;
     private RecipeService mRecipeService;
 
-    RecipesQueryTask(AsyncTaskCompleteListener<List<Recipe>> listener){
+    RecipesQueryTask(AsyncTaskCompleteListener<ArrayList<Recipe>> listener){
         this.listener = listener;
         mRecipeService = new RecipeServiceClient().mRecipeService;
     }
