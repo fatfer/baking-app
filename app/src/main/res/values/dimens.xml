@@ -1,0 +1,5 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="cards_gutter_half">4dp</dimen>
+    <dimen name="recycler_view_side_margin">4dp</dimen>
+</resources>
