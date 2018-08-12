@@ -1,23 +1,12 @@
 package com.udacity.bakingapp;
 
 import android.content.Intent;
-import android.os.Parcelable;
-import android.os.PersistableBundle;
+import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.udacity.bakingapp.Adapter.RecipeAdapter;
-import com.udacity.bakingapp.Adapter.StepAdapter;
-import com.udacity.bakingapp.Model.Ingredient;
 import com.udacity.bakingapp.Model.Recipe;
 import com.udacity.bakingapp.Model.Step;
 import com.udacity.bakingapp.Utils.Keys;
@@ -25,21 +14,15 @@ import com.udacity.bakingapp.Utils.Keys;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class RecipeDetailsActivity extends AppCompatActivity implements StepAdapter.ListItemClickListener {
+public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDetailFragment.OnFragmentInteractionListener, VideoFragment.OnFragmentInteractionListener {
 
     Recipe mRecipe;
-    @BindView(R.id.tv_ingredients)
-    TextView tv_ingredients;
-
-    @BindView(R.id.rv_steps)
-    RecyclerView rv_steps;
-
-    LinearLayoutManager mLayoutManager;
     List<Step> mSteps;
+
+    private String mVideoUri;
+    private int mCurrentStep = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,33 +32,34 @@ public class RecipeDetailsActivity extends AppCompatActivity implements StepAdap
 
         Intent intent = getIntent();
         mRecipe = (Recipe) (intent != null ? intent.getExtras()
-                .getParcelable(Keys.recipeKey) : null);
-
-        setActionBar();
-
-        List<Ingredient> ingredients = mRecipe.getIngredients();
-
-        for (Ingredient i: ingredients) {
-            tv_ingredients.append(" - " + i.getIngredient() + " (" + i.getQuantity() + " " + i.getMeasure() + ")\n");
-        }
+                .getParcelable(Keys.RECIPE_KEY) : null);
 
         mSteps = mRecipe.getSteps();
 
-        mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        setActionBar();
 
-        rv_steps.setLayoutManager(mLayoutManager);
-        rv_steps.setHasFixedSize(true);
+        if(savedInstanceState == null) {
+            RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
+            recipeDetailFragment.setRecipe(mRecipe);
+            recipeDetailFragment.setRecipeSteps(mRecipe.getSteps());
 
-        ArrayList<Step> stepArrayList = new ArrayList<>(mSteps);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fl_recipe_detail, recipeDetailFragment)
+                    .commit();
 
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(rv_steps.getContext(),DividerItemDecoration.VERTICAL);
-        itemDecoration.setDrawable(getDrawable(R.drawable.white_line));
+            if(findViewById(R.id.recipe_details_activity_tablet) != null) {
+                Bundle bundle = new Bundle();
+                VideoFragment videoFragment = new VideoFragment();
+                bundle.putString(Keys.STEP_VIDEO_URL, mSteps.get(0).getVideoURL());
+                bundle.putString(Keys.STEP_VIDEO_DESCRIPTION, mSteps.get(1).getDescription());
+                videoFragment.setArguments(bundle);
 
-        rv_steps.addItemDecoration(itemDecoration);
-
-        StepAdapter adapter = new StepAdapter(stepArrayList, this);
-        rv_steps.setAdapter(adapter);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fl_player_container, videoFragment)
+                        .commit();
+            }
+        }
 
     }
 
@@ -88,14 +72,43 @@ public class RecipeDetailsActivity extends AppCompatActivity implements StepAdap
         setTitle(mRecipe.getName());
     }
 
-    @Override
-    public void onListItemClick(int clickedItemIndex) {
 
-        Step step = mSteps.get(clickedItemIndex);
-        Intent intent = new Intent(this, StepActivity.class);
-        intent.putParcelableArrayListExtra(Keys.stepsList, new ArrayList<>(mSteps));
-        intent.putExtra(Keys.stepClicked, clickedItemIndex);
-        this.startActivity(intent);
+    private void playVideo(){
+
+        Step step = mSteps.get(mCurrentStep);
+        mVideoUri = step.getVideoURL();
+        String videoDescription = step.getDescription();
+
+        Bundle bundle = new Bundle();
+
+        VideoFragment videoFragment = new VideoFragment();
+        bundle.putString(Keys.STEP_VIDEO_URL, mVideoUri);
+        bundle.putString(Keys.STEP_VIDEO_DESCRIPTION, videoDescription);
+        videoFragment.setArguments(bundle);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fl_player_container, videoFragment)
+                .commit();
+
     }
 
+    @Override
+    public void onFragmentInteraction(int clickedItemIndex) {
+        if(findViewById(R.id.recipe_details_activity_tablet) != null) {
+            mCurrentStep = clickedItemIndex;
+            playVideo();
+        }else {
+            Intent intent = new Intent(this, StepActivity.class);
+            intent.putParcelableArrayListExtra(Keys.STEPS_LIST, new ArrayList<>(mSteps));
+            intent.putExtra(Keys.STEP_CLICKED, clickedItemIndex);
+            intent.putExtra(Keys.RECIPE_NAME_KEY, mRecipe.getName());
+            this.startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }

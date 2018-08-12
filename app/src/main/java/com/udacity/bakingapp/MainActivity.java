@@ -1,6 +1,8 @@
 package com.udacity.bakingapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -8,22 +10,19 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Display;
-import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.udacity.bakingapp.Adapter.RecipeAdapter;
 import com.udacity.bakingapp.Model.Recipe;
 import com.udacity.bakingapp.Utils.Keys;
-import com.udacity.bakingapp.Utils.Network;
-import com.udacity.bakingapp.Utils.RecipeService;
+import com.udacity.bakingapp.Widget.RecipeWidgetService;
 
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements RecipeAdapter.ListItemClickListener  {
+public class MainActivity extends AppCompatActivity implements RecipeAdapter.ListItemClickListener {
 
     @BindView(R.id.rv_recipes)
     RecyclerView rv_recipes;
@@ -49,10 +48,36 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Lis
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
+
         Recipe recipe = mRecipes.get(clickedItemIndex);
+        saveRecipeToSharedPreferences(recipe);
         Intent intent = new Intent(this, RecipeDetailsActivity.class);
-        intent.putExtra(Keys.recipeKey, recipe);
+        intent.putExtra(Keys.RECIPE_KEY, recipe);
         this.startActivity(intent);
+    }
+
+    private void saveRecipeToSharedPreferences(Recipe recipe){
+
+        SharedPreferences.Editor editor = getSharedPreferences(Keys.WIDGET_SHARED_PREFERENCES, MODE_PRIVATE).edit();
+
+        Gson gson = new Gson();
+        String recipeJson = gson.toJson(recipe);
+
+        editor.putString(Keys.JSON_RESULT, recipeJson);
+        editor.apply();
+
+        if(Build.VERSION.SDK_INT >25)
+
+            {
+                //Start the widget service to update the widget
+                RecipeWidgetService.startActionShowRecipe(this);
+            }
+        else
+
+            {
+                //For Android O -Start the widget service
+                RecipeWidgetService.startActionShowRecipe(this);
+            }
     }
 
     public class RecipesQueryTaskCompleteListener implements AsyncTaskCompleteListener<ArrayList<Recipe>>

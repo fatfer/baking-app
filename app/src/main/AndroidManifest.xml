@@ -25,8 +25,22 @@
             android:name=".RecipeDetailsActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".StepActivity"
-            android:parentActivityName=".RecipeDetailsActivity"/>
+        <activity
+            android:name=".StepActivity"
+            android:parentActivityName=".RecipeDetailsActivity" />
+
+        <receiver android:name=".Widget.RecipeWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/recipe_app_widget_info" />
+        </receiver>
+
+        <service android:name=".Widget.RecipeWidgetService"/>
+
     </application>
 
 </manifest>

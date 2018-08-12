@@ -54,8 +54,8 @@ public class VideoFragment extends Fragment {
     public static VideoFragment newInstance(String param1, String param2) {
         VideoFragment fragment = new VideoFragment();
         Bundle args = new Bundle();
-        args.putString(Keys.stepVideoURL, param1);
-        args.putString(Keys.stepVideoDescription, param2);
+        args.putString(Keys.STEP_VIDEO_URL, param1);
+        args.putString(Keys.STEP_VIDEO_DESCRIPTION, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,9 +65,15 @@ public class VideoFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mURL = Uri.parse(getArguments().getString(Keys.stepVideoURL));
-            mDescription = getArguments().getString(Keys.stepVideoDescription);
+            mURL = Uri.parse(getArguments().getString(Keys.STEP_VIDEO_URL));
+            mDescription = getArguments().getString(Keys.STEP_VIDEO_DESCRIPTION);
         }
+
+        if(savedInstanceState != null){
+            mURL = Uri.parse(savedInstanceState.getString(Keys.STEP_VIDEO_URL));
+            mDescription = savedInstanceState.getString(Keys.STEP_VIDEO_DESCRIPTION);
+        }
+
     }
 
     @Override
@@ -181,5 +187,12 @@ public class VideoFragment extends Fragment {
             videoSource = null;
             trackSelector = null;
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(Keys.STEP_VIDEO_URL, mURL.toString());
+        outState.putString(Keys.STEP_VIDEO_DESCRIPTION, mDescription);
     }
 }
