@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -21,6 +22,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 import com.udacity.bakingapp.Utils.Keys;
 
 import butterknife.BindView;
@@ -31,9 +33,13 @@ public class VideoFragment extends Fragment {
 
     private Uri mURL;
     private String mDescription;
+    private String mThumbnailURL;
 
     @BindView(R.id.player_view)
     com.google.android.exoplayer2.ui.PlayerView mPlayerView;
+
+    @BindView(R.id.iv_thumbnail)
+    ImageView iv_thumbnail;
 
     @BindView(R.id.tv_step_description)
     TextView tv_step_description;
@@ -67,11 +73,13 @@ public class VideoFragment extends Fragment {
         if (getArguments() != null) {
             mURL = Uri.parse(getArguments().getString(Keys.STEP_VIDEO_URL));
             mDescription = getArguments().getString(Keys.STEP_VIDEO_DESCRIPTION);
+            mThumbnailURL = getArguments().getString(Keys.STEP_THUMBNAIL_URL);
         }
 
         if(savedInstanceState != null){
             mURL = Uri.parse(savedInstanceState.getString(Keys.STEP_VIDEO_URL));
             mDescription = savedInstanceState.getString(Keys.STEP_VIDEO_DESCRIPTION);
+            mThumbnailURL = savedInstanceState.getString(Keys.STEP_THUMBNAIL_URL);
         }
 
     }
@@ -102,6 +110,10 @@ public class VideoFragment extends Fragment {
 
         String url = mURL.toString();
 
+        Picasso.get().load("http://i.imgur.com/DvcvbcvpvklR.png")
+                .placeholder(R.drawable.ic_room_service_black_24dp)
+                .error(R.drawable.ic_room_service_black_24dp).into(iv_thumbnail);
+
         if(!(url.equals(""))) {
             initializeVideoPlayer(mURL);
         }else{
@@ -111,12 +123,6 @@ public class VideoFragment extends Fragment {
         tv_step_description.setText(mDescription);
 
         return view;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        releasePlayer();
     }
 
     public void onButtonPressed(int currentStep) {
@@ -194,5 +200,7 @@ public class VideoFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putString(Keys.STEP_VIDEO_URL, mURL.toString());
         outState.putString(Keys.STEP_VIDEO_DESCRIPTION, mDescription);
+        outState.putString(Keys.STEP_THUMBNAIL_URL, mThumbnailURL);
+        outState.putLong(Keys.PLAYER_POSITION, mSimpleExoPlayer.getCurrentPosition() );
     }
 }

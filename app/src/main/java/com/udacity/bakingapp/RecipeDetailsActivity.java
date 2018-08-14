@@ -53,6 +53,7 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
                 VideoFragment videoFragment = new VideoFragment();
                 bundle.putString(Keys.STEP_VIDEO_URL, mSteps.get(mCurrentStep).getVideoURL());
                 bundle.putString(Keys.STEP_VIDEO_DESCRIPTION, mSteps.get(mCurrentStep).getDescription());
+                bundle.putString(Keys.STEP_THUMBNAIL_URL, mSteps.get(mCurrentStep).getThumbnailURL());
                 videoFragment.setArguments(bundle);
 
                 fragmentManager.beginTransaction()
@@ -77,13 +78,13 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
 
         Step step = mSteps.get(mCurrentStep);
         mVideoUri = step.getVideoURL();
-        String videoDescription = step.getDescription();
 
         Bundle bundle = new Bundle();
 
         VideoFragment videoFragment = new VideoFragment();
         bundle.putString(Keys.STEP_VIDEO_URL, mVideoUri);
-        bundle.putString(Keys.STEP_VIDEO_DESCRIPTION, videoDescription);
+        bundle.putString(Keys.STEP_VIDEO_DESCRIPTION, step.getDescription());
+        bundle.putString(Keys.STEP_THUMBNAIL_URL, step.getThumbnailURL());
         videoFragment.setArguments(bundle);
 
         FragmentManager fragmentManager = getSupportFragmentManager();

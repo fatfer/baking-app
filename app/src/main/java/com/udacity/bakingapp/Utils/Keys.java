@@ -12,5 +12,7 @@ public class Keys {
     public static final String RECIPE_NAME_KEY = "RECIPE_NAME_KEY";
     public static final String WIDGET_SHARED_PREFERENCES = "WIDGET_SHARED_PREFERENCES";
     public static final String JSON_RESULT = "JSON_RESULT";
+    public static final String PLAYER_POSITION = "PLAYER_POSITION";
+    public static final String STEP_THUMBNAIL_URL = "STEP_THUMBNAIL_URL";
 
 }
