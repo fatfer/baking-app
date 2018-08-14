@@ -110,9 +110,13 @@ public class VideoFragment extends Fragment {
 
         String url = mURL.toString();
 
-        Picasso.get().load("http://i.imgur.com/DvcvbcvpvklR.png")
-                .placeholder(R.drawable.ic_room_service_black_24dp)
-                .error(R.drawable.ic_room_service_black_24dp).into(iv_thumbnail);
+        if (mThumbnailURL != null && !mThumbnailURL.isEmpty()) {
+            Picasso.get().load(mThumbnailURL)
+                    .placeholder(R.drawable.ic_room_service_black_24dp)
+                    .error(R.drawable.ic_room_service_black_24dp).into(iv_thumbnail);
+        }else{
+            iv_thumbnail.setVisibility(View.GONE);
+        }
 
         if(!(url.equals(""))) {
             initializeVideoPlayer(mURL);
