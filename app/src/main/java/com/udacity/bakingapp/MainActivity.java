@@ -10,11 +10,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.udacity.bakingapp.Adapter.RecipeAdapter;
 import com.udacity.bakingapp.Model.Recipe;
 import com.udacity.bakingapp.Utils.Keys;
+import com.udacity.bakingapp.Utils.Network;
 import com.udacity.bakingapp.Widget.RecipeWidgetService;
 
 import java.util.ArrayList;
@@ -27,6 +31,9 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Lis
     @BindView(R.id.rv_recipes)
     RecyclerView rv_recipes;
 
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+
     private ArrayList<Recipe> mRecipes;
     private LinearLayoutManager mLayoutManager;
     private GridLayoutManager mLayoutManagerTablet;
@@ -37,7 +44,12 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Lis
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        getRecipes();
+        if(Network.isInternetAvailable(this)) {
+            getRecipes();
+            progressBar.setVisibility(View.VISIBLE);
+        }else{
+            Toast.makeText(MainActivity.this, R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void getRecipes() {
@@ -86,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Lis
         @Override
         public void onTaskComplete(ArrayList<Recipe> result) {
             mRecipes = result;
+            progressBar.setVisibility(View.INVISIBLE);
             drawRecipes();
         }
     }

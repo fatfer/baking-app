@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -98,6 +99,11 @@ public class RecipeDetailFragment extends Fragment implements StepAdapter.ListIt
         View viewRoot = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
         ButterKnife.bind(this, viewRoot);
 
+        if (savedInstanceState != null) {
+            mRecipe = savedInstanceState.getParcelable(Keys.RECIPE_KEY);
+            mSteps = savedInstanceState.getParcelableArrayList(Keys.STEPS_LIST);
+        }
+
         List<Ingredient> ingredients = mRecipe.getIngredients();
 
         for (Ingredient i: ingredients) {
@@ -140,6 +146,23 @@ public class RecipeDetailFragment extends Fragment implements StepAdapter.ListIt
         mListener = null;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            mRecipe =  savedInstanceState.getParcelable(Keys.RECIPE_KEY);
+            mSteps = savedInstanceState.getParcelableArrayList(Keys.STEPS_LIST);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(Keys.RECIPE_KEY, mRecipe);
+        outState.putParcelableArrayList(Keys.STEPS_LIST, new ArrayList<>(mSteps));
+    }
+
     public void setRecipe(Recipe recipe){
         this.mRecipe = recipe;
     }
@@ -150,7 +173,6 @@ public class RecipeDetailFragment extends Fragment implements StepAdapter.ListIt
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        Step step = mSteps.get(clickedItemIndex);
         mListener.onFragmentInteraction(clickedItemIndex);
     }
 

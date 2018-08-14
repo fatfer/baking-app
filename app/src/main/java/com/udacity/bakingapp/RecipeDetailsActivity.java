@@ -51,8 +51,8 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
             if(findViewById(R.id.recipe_details_activity_tablet) != null) {
                 Bundle bundle = new Bundle();
                 VideoFragment videoFragment = new VideoFragment();
-                bundle.putString(Keys.STEP_VIDEO_URL, mSteps.get(0).getVideoURL());
-                bundle.putString(Keys.STEP_VIDEO_DESCRIPTION, mSteps.get(1).getDescription());
+                bundle.putString(Keys.STEP_VIDEO_URL, mSteps.get(mCurrentStep).getVideoURL());
+                bundle.putString(Keys.STEP_VIDEO_DESCRIPTION, mSteps.get(mCurrentStep).getDescription());
                 videoFragment.setArguments(bundle);
 
                 fragmentManager.beginTransaction()
@@ -107,8 +107,4 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeDe
         }
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 }

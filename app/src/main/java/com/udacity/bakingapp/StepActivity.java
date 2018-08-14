@@ -43,15 +43,16 @@ public class StepActivity extends AppCompatActivity implements VideoFragment.OnF
 
         if(savedInstanceState != null){
             mCurrentStep = savedInstanceState.getInt(Keys.CURRENT_STEP,0);
+            mRecipeName = savedInstanceState.getString(Keys.RECIPE_NAME_KEY);
             if(mStepArrayList.isEmpty())
                 mStepArrayList = savedInstanceState.getParcelableArrayList(Keys.STEPS_LIST);
-        }
-
-        Intent intent = getIntent();
-        if(intent != null){
-            mStepArrayList = getIntent().getParcelableArrayListExtra(Keys.STEPS_LIST);
-            mCurrentStep = getIntent().getIntExtra(Keys.STEP_CLICKED,0);
-            mRecipeName = getIntent().getStringExtra(Keys.RECIPE_NAME_KEY);
+        }else {
+            Intent intent = getIntent();
+            if(intent != null){
+                mStepArrayList = getIntent().getParcelableArrayListExtra(Keys.STEPS_LIST);
+                mCurrentStep = getIntent().getIntExtra(Keys.STEP_CLICKED,0);
+                mRecipeName = getIntent().getStringExtra(Keys.RECIPE_NAME_KEY);
+            }
         }
 
         setActionBar();
@@ -122,10 +123,12 @@ public class StepActivity extends AppCompatActivity implements VideoFragment.OnF
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(Keys.STEPS_LIST, mStepArrayList);
         outState.putInt(Keys.CURRENT_STEP, mCurrentStep);
+        outState.putString(Keys.RECIPE_NAME_KEY, mRecipeName);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
 
+    @Override
+    public void onFragmentInteraction(int currentStep) {
+        mCurrentStep = currentStep;
     }
 }

@@ -77,7 +77,7 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepViewHolder
         void bind(int listIndex) {
 
             Step step = mStepList.get(listIndex);
-            tv_step_short_description.setText(listIndex + ". " + step.getShortDescription());
+            tv_step_short_description.setText(step.getId() + ". " + step.getShortDescription());
 
             String videoURL = step.getVideoURL();
             if(videoURL != null && !videoURL.isEmpty()){

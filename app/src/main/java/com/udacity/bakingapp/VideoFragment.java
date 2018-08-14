@@ -119,9 +119,9 @@ public class VideoFragment extends Fragment {
         releasePlayer();
     }
 
-    public void onButtonPressed(Uri uri) {
+    public void onButtonPressed(int currentStep) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onFragmentInteraction(currentStep);
         }
     }
 
@@ -146,7 +146,7 @@ public class VideoFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(int currentStep);
     }
 
     public void initializeVideoPlayer(Uri videoUri){
