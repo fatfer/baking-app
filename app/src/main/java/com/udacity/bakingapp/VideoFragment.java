@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -45,6 +46,8 @@ public class VideoFragment extends Fragment {
     TextView tv_step_description;
 
     private OnFragmentInteractionListener mListener;
+    private long mVideoCurrentPosition = 0;
+    private boolean mPlayWhenReady = true;
 
     SimpleExoPlayer mSimpleExoPlayer;
     DefaultBandwidthMeter bandwidthMeter;
@@ -80,6 +83,8 @@ public class VideoFragment extends Fragment {
             mURL = Uri.parse(savedInstanceState.getString(Keys.STEP_VIDEO_URL));
             mDescription = savedInstanceState.getString(Keys.STEP_VIDEO_DESCRIPTION);
             mThumbnailURL = savedInstanceState.getString(Keys.STEP_THUMBNAIL_URL);
+            mVideoCurrentPosition = savedInstanceState.getLong(Keys.VIDEO_PLAYER_POSITION);
+            mPlayWhenReady = savedInstanceState.getBoolean(Keys.VIDEO_PLAY_WHEN_READY);
         }
 
     }
@@ -161,7 +166,7 @@ public class VideoFragment extends Fragment {
 
     public void initializeVideoPlayer(Uri videoUri){
         if(mSimpleExoPlayer == null){
-
+            Toast.makeText(this.getContext(),mVideoCurrentPosition+"",Toast.LENGTH_LONG).show();
             // 1. Create a default TrackSelector
             bandwidthMeter = new DefaultBandwidthMeter();
             videoTrackSelectionFactory =
@@ -183,13 +188,22 @@ public class VideoFragment extends Fragment {
             // This is the MediaSource representing the media to be played.
             videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                     .createMediaSource(videoUri);
+
             // Prepare the player with the source.
             mSimpleExoPlayer.prepare(videoSource);
+
+            //Set play when ready
+            mSimpleExoPlayer.setPlayWhenReady(mPlayWhenReady);
+
+            //Set position
+            mSimpleExoPlayer.seekTo(mVideoCurrentPosition);
         }
     }
 
     private void releasePlayer() {
         if (mSimpleExoPlayer != null) {
+            mVideoCurrentPosition = mSimpleExoPlayer.getCurrentPosition();
+            mPlayWhenReady = mSimpleExoPlayer.getPlayWhenReady();
             mSimpleExoPlayer.stop();
             mSimpleExoPlayer.release();
             mSimpleExoPlayer = null;
@@ -202,9 +216,13 @@ public class VideoFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        releasePlayer();
+
         outState.putString(Keys.STEP_VIDEO_URL, mURL.toString());
         outState.putString(Keys.STEP_VIDEO_DESCRIPTION, mDescription);
         outState.putString(Keys.STEP_THUMBNAIL_URL, mThumbnailURL);
-        outState.putLong(Keys.PLAYER_POSITION, mSimpleExoPlayer.getCurrentPosition() );
+        outState.putLong(Keys.VIDEO_PLAYER_POSITION, mVideoCurrentPosition );
+        outState.putBoolean(Keys.VIDEO_PLAY_WHEN_READY, mPlayWhenReady );
     }
 }

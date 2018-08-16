@@ -53,11 +53,12 @@ public class StepActivity extends AppCompatActivity implements VideoFragment.OnF
                 mCurrentStep = getIntent().getIntExtra(Keys.STEP_CLICKED,0);
                 mRecipeName = getIntent().getStringExtra(Keys.RECIPE_NAME_KEY);
             }
+
+            playVideo();
         }
 
         setActionBar();
         handleStepNavigationButtonsVisibility();
-        playVideo();
     }
 
     private void setActionBar() {
@@ -73,14 +74,12 @@ public class StepActivity extends AppCompatActivity implements VideoFragment.OnF
         Step step = mStepArrayList.get(mCurrentStep);
         mVideoUri = step.getVideoURL();
 
-        fl_player_container.setVisibility(View.VISIBLE);
-        String videoDescription = step.getDescription();
-
         Bundle bundle = new Bundle();
 
         VideoFragment videoFragment = new VideoFragment();
         bundle.putString(Keys.STEP_VIDEO_URL, mVideoUri);
-        bundle.putString(Keys.STEP_VIDEO_DESCRIPTION, videoDescription);
+        bundle.putString(Keys.STEP_VIDEO_DESCRIPTION, step.getDescription());
+        bundle.putString(Keys.STEP_THUMBNAIL_URL, step.getThumbnailURL());
         videoFragment.setArguments(bundle);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
