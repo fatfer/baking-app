@@ -48,6 +48,7 @@ public class RecipeWidgetService extends IntentService {
         SharedPreferences sharedpreferences =
                 getSharedPreferences(Keys.WIDGET_SHARED_PREFERENCES,MODE_PRIVATE);
         String jsonRecipe = sharedpreferences.getString(Keys.JSON_RESULT, "");
+        String nameRecipe = sharedpreferences.getString(Keys.RECIPE_NAME_KEY, "");
         StringBuilder stringBuilder = new StringBuilder();
         Gson gson = new Gson();
         Recipe recipe = gson.fromJson(jsonRecipe, Recipe.class);
@@ -62,7 +63,7 @@ public class RecipeWidgetService extends IntentService {
         String ingredientsString = stringBuilder.toString();
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, RecipeWidget.class));
-        RecipeWidget.updateWidgetRecipe(this, appWidgetManager, appWidgetIds, ingredientsString);
+        RecipeWidget.updateWidgetRecipe(this, appWidgetManager, appWidgetIds, ingredientsString, nameRecipe);
     }
 
     public static void startActionShowRecipe(Context context) {

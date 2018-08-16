@@ -166,7 +166,7 @@ public class VideoFragment extends Fragment {
 
     public void initializeVideoPlayer(Uri videoUri){
         if(mSimpleExoPlayer == null){
-            Toast.makeText(this.getContext(),mVideoCurrentPosition+"",Toast.LENGTH_LONG).show();
+
             // 1. Create a default TrackSelector
             bandwidthMeter = new DefaultBandwidthMeter();
             videoTrackSelectionFactory =

@@ -76,20 +76,11 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Lis
         String recipeJson = gson.toJson(recipe);
 
         editor.putString(Keys.JSON_RESULT, recipeJson);
+        editor.putString(Keys.RECIPE_NAME_KEY, recipe.getName());
         editor.apply();
 
-        if(Build.VERSION.SDK_INT >25)
+        RecipeWidgetService.startActionShowRecipe(this);
 
-            {
-                //Start the widget service to update the widget
-                RecipeWidgetService.startActionShowRecipe(this);
-            }
-        else
-
-            {
-                //For Android O -Start the widget service
-                RecipeWidgetService.startActionShowRecipe(this);
-            }
     }
 
     public class RecipesQueryTaskCompleteListener implements AsyncTaskCompleteListener<ArrayList<Recipe>>

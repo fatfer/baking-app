@@ -16,7 +16,7 @@ import com.udacity.bakingapp.R;
 public class RecipeWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId, String jsonRecipeIngredients) {
+                                int appWidgetId, String jsonRecipeIngredients, String nameRecipe) {
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_app_widget);
@@ -25,6 +25,7 @@ public class RecipeWidget extends AppWidgetProvider {
         PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,0);
         views.setOnClickPendingIntent(R.id.appwidget_ingredients_text, pendingIntent);
 
+        views.setTextViewText(R.id.appwidget_recipe_name_text, nameRecipe);
         views.setTextViewText(R.id.appwidget_ingredients_text, jsonRecipeIngredients);
 
         // Instruct the widget manager to update the widget
@@ -37,10 +38,10 @@ public class RecipeWidget extends AppWidgetProvider {
         RecipeWidgetService.startActionShowRecipe(context);
     }
 
-    public static void updateWidgetRecipe(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds, String jsonRecipeIngredients) {
+    public static void updateWidgetRecipe(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds, String jsonRecipeIngredients, String nameRecipe) {
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId, jsonRecipeIngredients);
+            updateAppWidget(context, appWidgetManager, appWidgetId, jsonRecipeIngredients, nameRecipe);
         }
     }
 
