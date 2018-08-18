@@ -3,6 +3,12 @@ package com.udacity.bakingapp;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.udacity.bakingapp.Adapter.RecipeAdapter;
+import com.udacity.bakingapp.IdlingResource.SimpleIdlingResource;
 import com.udacity.bakingapp.Model.Recipe;
 import com.udacity.bakingapp.Utils.Keys;
 import com.udacity.bakingapp.Utils.Network;
@@ -26,7 +33,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements RecipeAdapter.ListItemClickListener {
+public class MainActivity extends AppCompatActivity implements RecipeAdapter.ListItemClickListener{
 
     @BindView(R.id.rv_recipes)
     RecyclerView rv_recipes;
@@ -37,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Lis
     private ArrayList<Recipe> mRecipes;
     private LinearLayoutManager mLayoutManager;
     private GridLayoutManager mLayoutManagerTablet;
+
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Lis
             mRecipes = result;
             progressBar.setVisibility(View.INVISIBLE);
             drawRecipes();
+            setIdleState();
         }
     }
 
@@ -126,4 +137,26 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Lis
         return Math.round(screenWidth / posterWidth);
     }
 
+
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+            mIdlingResource.setIdleState(false);
+        }
+        return mIdlingResource;
+    }
+
+    private void setIdleState() {
+        if (mIdlingResource != null) {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mIdlingResource.setIdleState(true);
+                }
+            }, 1000);
+        }
+    }
 }

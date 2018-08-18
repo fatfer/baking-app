@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -23,7 +24,6 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.squareup.picasso.Picasso;
 import com.udacity.bakingapp.Utils.Keys;
 
 import butterknife.BindView;
@@ -116,7 +116,7 @@ public class VideoFragment extends Fragment {
         String url = mURL.toString();
 
         if (mThumbnailURL != null && !mThumbnailURL.isEmpty()) {
-            Picasso.get().load(mThumbnailURL)
+            Glide.with(this.getContext()).load(mThumbnailURL)
                     .placeholder(R.drawable.ic_room_service_black_24dp)
                     .error(R.drawable.ic_room_service_black_24dp).into(iv_thumbnail);
         }else{
